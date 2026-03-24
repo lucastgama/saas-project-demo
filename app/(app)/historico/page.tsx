@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getSales } from "@/lib/store";
 import { Sale } from "@/lib/types";
 import Card from "@/components/Card";
+import { MdHistory, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 function fmt(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -95,7 +96,7 @@ export default function HistoricoPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-slate-400">
-          <p className="text-4xl mb-3">📋</p>
+          <MdHistory size={48} className="mx-auto mb-3 opacity-40" />
           <p className="font-medium">Nenhuma venda encontrada.</p>
           {hasFilters && <p className="text-sm mt-1">Tente ajustar os filtros.</p>}
         </div>
@@ -117,9 +118,9 @@ export default function HistoricoPage() {
                   </p>
                   {sale.note && <p className="text-xs text-slate-400 mt-0.5 italic">"{sale.note}"</p>}
                 </div>
-                <div className="text-right flex-shrink-0">
+                <div className="text-right shrink-0">
                   <p className="font-bold text-slate-800">{fmt(sale.total)}</p>
-                  <p className="text-xs text-slate-400">{expanded === sale.id ? "▲" : "▼"}</p>
+                  <p className="text-xs text-slate-400 flex justify-end">{expanded === sale.id ? <MdKeyboardArrowUp size={16} /> : <MdKeyboardArrowDown size={16} />}</p>
                 </div>
               </div>
               {expanded === sale.id && (
