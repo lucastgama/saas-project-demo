@@ -76,12 +76,11 @@ export default function Sidebar() {
           <Link
             key={href}
             href={href}
-            className={`flex-1 flex flex-col items-center py-2 px-1 text-xs font-medium transition-colors min-w-16 ${
+            className={`flex-1 flex flex-col items-center py-3 text-xs font-medium transition-colors min-w-16 ${
               pathname.startsWith(href) ? "text-blue-600" : "text-slate-500"
             }`}
           >
-            <Icon size={22} className="mb-0.5" />
-            {label}
+            <Icon size={26} className="mb-0.5" />
           </Link>
         ))}
       </nav>
