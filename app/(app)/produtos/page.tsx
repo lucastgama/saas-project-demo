@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
   getProducts,
   addProduct,
   updateProduct,
   deleteProduct,
+  getCategories,
 } from "@/lib/store";
 import { Product } from "@/lib/types";
 import Card from "@/components/Card";
@@ -15,21 +15,20 @@ import Input from "@/components/Input";
 import Select from "@/components/Select";
 import Modal from "@/components/Modal";
 import Toast from "@/components/Toast";
-
-const CATEGORIES = [
-  "Alimentos",
-  "Bebidas",
-  "Laticinios",
-  "Limpeza",
-  "Higiene",
-  "Outros",
-];
+import {
+  MdAdd,
+  MdSearch,
+  MdEdit,
+  MdDelete,
+  MdWarning,
+  MdInventory2,
+} from "react-icons/md";
 const UNITS = ["un", "pct", "kg", "L", "cx"];
 
 type FormData = Omit<Product, "id">;
 const empty: FormData = {
   name: "",
-  category: "Alimentos",
+  category: "",
   price: 0,
   stock: 0,
   minStock: 5,
@@ -42,6 +41,7 @@ function fmt(n: number) {
 
 export default function ProdutosPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -57,6 +57,10 @@ export default function ProdutosPage() {
 
   useEffect(() => {
     refresh();
+    getCategories().then((cats) => {
+      setCategories(cats);
+      setForm((f) => ({ ...f, category: cats[0] ?? "" }));
+    });
   }, []);
 
   useEffect(() => {
@@ -145,26 +149,14 @@ export default function ProdutosPage() {
             {products.length} produto(s) no catalogo
           </p>
         </div>
-        <Button onClick={openCreate} size="lg">
-          <Image
-            src="/icons/add.png"
-            width={18}
-            height={18}
-            alt=""
-            className="w-4.5 h-4.5 object-contain"
-          />
+        <Button onClick={openCreate} size="lg" className="flex items-center gap-2">
+          <MdAdd size={20} />
           Novo Produto
         </Button>
       </div>
 
       <div className="relative">
-        <Image
-          src="/icons/seach.png"
-          width={20}
-          height={20}
-          alt="Buscar"
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 object-contain pointer-events-none"
-        />
+        <MdSearch size={20} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
         <Input
           placeholder="Buscar produto ou categoria..."
           value={search}
@@ -179,13 +171,7 @@ export default function ProdutosPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-slate-400">
-          <Image
-            src="/icons/box.png"
-            width={18}
-            height={18}
-            alt=""
-            className="w-4.5 h-4.5 object-contain"
-          />
+          <MdInventory2 size={48} className="mx-auto mb-3 opacity-40" />
           <p className="font-medium">Nenhum produto encontrado.</p>
         </div>
       ) : (
@@ -212,19 +198,9 @@ export default function ProdutosPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-sm font-semibold px-2.5 py-1 rounded-full ${isLow ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"}`}
+                    className={`text-sm font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 ${isLow ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"}`}
                   >
-                    {isLow ? (
-                      <Image
-                        src="/icons/warning.png"
-                        width={18}
-                        height={18}
-                        alt=""
-                        className="w-4.5 h-4.5 object-contain"
-                      />
-                    ) : (
-                      " "
-                    )}
+                    {isLow && <MdWarning size={14} />}
                     {p.stock} {p.unit}
                   </span>
                   <span className="text-xs text-slate-400">
@@ -235,16 +211,10 @@ export default function ProdutosPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 flex items-center gap-1"
                     onClick={() => openEdit(p)}
                   >
-                    <Image
-                      src="/icons/pencil.png"
-                      width={18}
-                      height={18}
-                      alt=""
-                      className="w-4.5 h-4.5 object-contain"
-                    />
+                    <MdEdit size={16} />
                     Editar
                   </Button>
                   <Button
@@ -252,13 +222,7 @@ export default function ProdutosPage() {
                     size="sm"
                     onClick={() => setDeleteId(p.id)}
                   >
-                    <Image
-                      src="/icons/trash.png"
-                      width={18}
-                      height={18}
-                      alt=""
-                      className="w-4.5 h-4.5 object-contain"
-                    />
+                    <MdDelete size={16} />
                   </Button>
                 </div>
               </Card>
@@ -293,7 +257,7 @@ export default function ProdutosPage() {
                   value={form.category}
                   onChange={(e) => set("category", e.target.value)}
                 >
-                  {CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <option key={c}>{c}</option>
                   ))}
                 </Select>

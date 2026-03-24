@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getProducts, addSale } from "@/lib/store";
@@ -9,21 +8,25 @@ import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Select from "@/components/Select";
 import Toast from "@/components/Toast";
+import {
+  MdQrCode2,
+  MdAttachMoney,
+  MdCreditCard,
+  MdCheckCircle,
+  MdShoppingCart,
+  MdAddShoppingCart,
+} from "react-icons/md";
+import type { IconType } from "react-icons";
 
 function fmt(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 type PaymentMethod = "cash" | "card" | "pix";
-const paymentOptions: {
-  value: PaymentMethod;
-  label: string;
-  iconImg?: string;
-  icon?: string;
-}[] = [
-  { value: "pix", label: "Pix", iconImg: "/icons/smartphone.png" },
-  { value: "cash", label: "Dinheiro", iconImg: "/icons/money.png" },
-  { value: "card", label: "Cartao", iconImg: "/icons/card.png" },
+const paymentOptions: { value: PaymentMethod; label: string; Icon: IconType }[] = [
+  { value: "pix",  label: "Pix",      Icon: MdQrCode2 },
+  { value: "cash", label: "Dinheiro", Icon: MdAttachMoney },
+  { value: "card", label: "Cartao",   Icon: MdCreditCard },
 ];
 
 export default function VendasPage() {
@@ -125,8 +128,8 @@ export default function VendasPage() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center">
-        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-4xl">
-          
+        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
+          <MdCheckCircle size={48} className="text-emerald-500" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-slate-800">
@@ -141,7 +144,8 @@ export default function VendasPage() {
             Ver Historico
           </Button>
           <Button onClick={handleNew} size="lg">
-            ➕ Nova Venda
+            <MdAddShoppingCart size={18} />
+            Nova Venda
           </Button>
         </div>
       </div>
@@ -289,17 +293,7 @@ export default function VendasPage() {
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                 }`}
               >
-                {opt.iconImg ? (
-                  <Image
-                    src={opt.iconImg}
-                    width={32}
-                    height={32}
-                    alt={opt.label}
-                    className="w-8 h-8 object-contain"
-                  />
-                ) : (
-                  <span className="text-2xl">{opt.icon}</span>
-                )}
+                <opt.Icon size={28} />
                 {opt.label}
               </button>
             ))}
@@ -329,7 +323,7 @@ export default function VendasPage() {
 
       {items.length === 0 && (
         <div className="text-center py-10 text-slate-400">
-          <p className="text-4xl mb-3">🛒</p>
+          <MdShoppingCart size={48} className="mx-auto mb-3 opacity-40" />
           <p>Nenhum produto adicionado ainda.</p>
         </div>
       )}

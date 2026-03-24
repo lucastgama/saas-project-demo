@@ -7,6 +7,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  getDoc,
   query,
   orderBy,
   setDoc,
@@ -14,9 +15,7 @@ import {
 } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "./firebase";
-import { Product, Sale } from "./types";
-
-// ── helpers ──────────────────────────────────────────────────────────────────
+import { Product, Sale, Settings } from "./types";
 
 function uid(): string {
   const user = auth.currentUser;
@@ -24,30 +23,27 @@ function uid(): string {
   return user.uid;
 }
 
-// ── seed data ─────────────────────────────────────────────────────────────────
+const DEFAULT_SETTINGS: Settings = {
+  businessName: "Minha Loja",
+  categories: ["Alimentos", "Bebidas", "Laticínios", "Limpeza", "Higiene", "Outros"],
+};
 
-const SEED_PRODUCTS: Product[] = [
-  { id: "p1", name: "Arroz 5kg",          category: "Alimentos", price: 28.9,  stock: 40, minStock: 10, unit: "pct" },
-  { id: "p2", name: "Feijão 1kg",         category: "Alimentos", price: 8.5,   stock: 5,  minStock: 8,  unit: "pct" },
-  { id: "p3", name: "Óleo de Soja 900ml", category: "Alimentos", price: 7.9,   stock: 22, minStock: 10, unit: "un"  },
-  { id: "p4", name: "Refrigerante 2L",    category: "Bebidas",   price: 9.0,   stock: 3,  minStock: 6,  unit: "un"  },
-  { id: "p5", name: "Café 500g",          category: "Bebidas",   price: 15.99, stock: 18, minStock: 5,  unit: "pct" },
-  { id: "p6", name: "Açúcar 1kg",         category: "Alimentos", price: 5.5,   stock: 30, minStock: 10, unit: "pct" },
-  { id: "p7", name: "Sal 1kg",            category: "Alimentos", price: 2.99,  stock: 25, minStock: 5,  unit: "pct" },
-  { id: "p8", name: "Leite 1L",           category: "Laticínios",price: 4.99,  stock: 2,  minStock: 12, unit: "un"  },
-];
-
-export async function seedIfEmpty(): Promise<void> {
+export async function getSettings(): Promise<Settings> {
   const userId = uid();
-  const snap = await getDocs(collection(db, "users", userId, "products"));
-  if (!snap.empty) return;
-  for (const p of SEED_PRODUCTS) {
-    const { id, ...data } = p;
-    await setDoc(doc(db, "users", userId, "products", id), data);
-  }
+  const snap = await getDoc(doc(db, "users", userId, "settings", "general"));
+  if (!snap.exists()) return DEFAULT_SETTINGS;
+  return { ...DEFAULT_SETTINGS, ...(snap.data() as Partial<Settings>) };
 }
 
-// ── products ─────────────────────────────────────────────────────────────────
+export async function saveSettings(data: Partial<Settings>): Promise<void> {
+  const userId = uid();
+  await setDoc(doc(db, "users", userId, "settings", "general"), data, { merge: true });
+}
+
+export async function getCategories(): Promise<string[]> {
+  const s = await getSettings();
+  return s.categories;
+}
 
 export async function getProducts(): Promise<Product[]> {
   const userId = uid();
@@ -71,8 +67,6 @@ export async function deleteProduct(id: string): Promise<void> {
   const userId = uid();
   await deleteDoc(doc(db, "users", userId, "products", id));
 }
-
-// ── sales ─────────────────────────────────────────────────────────────────────
 
 export async function getSales(): Promise<Sale[]> {
   const userId = uid();
@@ -101,8 +95,6 @@ export async function addSale(data: Omit<Sale, "id" | "createdAt">): Promise<Sal
 
   return { id: saleRef.id, ...saleData };
 }
-
-// ── auth ──────────────────────────────────────────────────────────────────────
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {

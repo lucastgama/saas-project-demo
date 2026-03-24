@@ -1,11 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getProducts, getSales, seedIfEmpty } from "@/lib/store";
+import { getProducts, getSales } from "@/lib/store";
 import { Product, Sale } from "@/lib/types";
 import Card from "@/components/Card";
 import Link from "next/link";
+import {
+  MdTrendingUp,
+  MdInventory2,
+  MdWarning,
+  MdShoppingCart,
+  MdAddCircle,
+} from "react-icons/md";
 
 function fmt(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -28,7 +34,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function load() {
-      await seedIfEmpty();
       const [prods, sls] = await Promise.all([getProducts(), getSales()]);
       setProducts(prods);
       setSales(sls);
@@ -70,14 +75,8 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <Image
-              src="/icons/dashboard.png"
-              width={32}
-              height={32}
-              alt="Vendas"
-              className="w-8 h-8 object-contain"
-            />
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+            <MdTrendingUp size={28} className="text-blue-600" />
           </div>
           <div>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
@@ -93,14 +92,8 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-            <Image
-              src="/icons/box.png"
-              width={32}
-              height={32}
-              alt="Produtos"
-              className="w-8 h-8 object-contain"
-            />
+          <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+            <MdInventory2 size={28} className="text-emerald-600" />
           </div>
           <div>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
@@ -117,15 +110,9 @@ export default function DashboardPage() {
           className={`flex items-center gap-4 ${lowStock.length > 0 ? "border-orange-200 bg-orange-50" : ""}`}
         >
           <div
-            className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${lowStock.length > 0 ? "bg-orange-100" : "bg-slate-100"}`}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${lowStock.length > 0 ? "bg-orange-100" : "bg-slate-100"}`}
           >
-            <Image
-              src="/icons/warning.png"
-              width={32}
-              height={32}
-              alt="Warning"
-              className="w-8 h-8 object-contain"
-            />
+            <MdWarning size={28} className={lowStock.length > 0 ? "text-orange-500" : "text-slate-400"} />
           </div>
           <div>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
@@ -144,14 +131,8 @@ export default function DashboardPage() {
       {lowStock.length > 0 && (
         <Card>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-slate-700">
-              <Image
-                src="/icons/warning.png"
-                width={32}
-                height={32}
-                alt="Warning"
-                className="w-8 h-8 object-contain"
-              />
+            <h2 className="font-semibold text-slate-700 flex items-center gap-2">
+              <MdWarning size={18} className="text-orange-500" />
               Alertas de Estoque
             </h2>
             <Link
@@ -183,13 +164,7 @@ export default function DashboardPage() {
         <Link href="/vendas">
           <div className="bg-blue-500 hover:bg-blue-600 transition-colors rounded-2xl p-5 text-white text-center cursor-pointer shadow-sm">
             <div className="flex justify-center mb-2">
-              <Image
-                src="/icons/cart.png"
-                width={40}
-                height={40}
-                alt="Nova Venda"
-                className="w-10 h-10 object-contain"
-              />
+              <MdShoppingCart size={40} />
             </div>
             <p className="font-semibold text-sm">Nova Venda</p>
           </div>
@@ -197,13 +172,7 @@ export default function DashboardPage() {
         <Link href="/produtos">
           <div className="bg-emerald-500 hover:bg-emerald-600 transition-colors rounded-2xl p-5 text-white text-center cursor-pointer shadow-sm">
             <div className="flex justify-center mb-2">
-              <Image
-                src="/icons/add.png"
-                width={40}
-                height={40}
-                alt="Adicionar Produto"
-                className="w-10 h-10 object-contain"
-              />
+              <MdAddCircle size={40} />
             </div>
             <p className="font-semibold text-sm">Adicionar Produto</p>
           </div>

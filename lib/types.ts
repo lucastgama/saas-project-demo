@@ -24,3 +24,8 @@ export type Sale = {
   createdAt: string;
   note?: string;
 };
+
+export type Settings = {
+  businessName: string;
+  categories: string[];
+};

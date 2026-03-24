@@ -1,20 +1,28 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import {
+  MdDashboard,
+  MdInventory2,
+  MdShoppingCart,
+  MdHistory,
+  MdBarChart,
+  MdSettings,
+  MdLogout,
+} from "react-icons/md";
+import type { IconType } from "react-icons";
 
-const navItems: {
-  href: string;
-  label: string;
-  iconImg?: string;
-  icon?: string;
-}[] = [
-  { href: "/dashboard", label: "Dashboard", iconImg: "/icons/dashboard.png" },
-  { href: "/produtos", label: "Produtos", iconImg: "/icons/box.png" },
-  { href: "/vendas", label: "Nova Venda", iconImg: "/icons/sellers.png" },
-  { href: "/historico", label: "Historico", iconImg: "/icons/pencil.png" },
+type NavItem = { href: string; label: string; Icon: IconType };
+
+const navItems: NavItem[] = [
+  { href: "/dashboard", label: "Dashboard", Icon: MdDashboard },
+  { href: "/produtos", label: "Produtos", Icon: MdInventory2 },
+  { href: "/vendas", label: "Nova Venda", Icon: MdShoppingCart },
+  { href: "/historico", label: "Historico", Icon: MdHistory },
+  { href: "/relatorios", label: "Relatorios", Icon: MdBarChart },
+  { href: "/configuracoes", label: "Configuracoes", Icon: MdSettings },
 ];
 
 export default function Sidebar() {
@@ -37,28 +45,18 @@ export default function Sidebar() {
           <p className="text-xs text-slate-400 mt-0.5">Sistema de Vendas</p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => (
+          {navItems.map(({ href, label, Icon }) => (
             <Link
-              key={item.href}
-              href={item.href}
+              key={href}
+              href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                pathname.startsWith(item.href)
+                pathname.startsWith(href)
                   ? "bg-blue-50 text-blue-700"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
-              {item.iconImg ? (
-                <Image
-                  src={item.iconImg}
-                  width={22}
-                  height={22}
-                  alt={item.label}
-                  className="w-5 h-5 object-contain"
-                />
-              ) : (
-                <span className="text-lg">{item.icon}</span>
-              )}
-              {item.label}
+              <Icon size={20} />
+              {label}
             </Link>
           ))}
         </nav>
@@ -67,34 +65,22 @@ export default function Sidebar() {
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors"
           >
+            <MdLogout size={20} />
             Sair
           </button>
         </div>
       </aside>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 flex">
-        {navItems.map((item) => (
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 flex overflow-x-auto">
+        {navItems.map(({ href, label, Icon }) => (
           <Link
-            key={item.href}
-            href={item.href}
-            className={`flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors ${
-              pathname.startsWith(item.href)
-                ? "text-blue-600"
-                : "text-slate-500"
+            key={href}
+            href={href}
+            className={`flex-1 flex flex-col items-center py-3 text-xs font-medium transition-colors min-w-12 ${
+              pathname.startsWith(href) ? "text-blue-600" : "text-slate-500"
             }`}
           >
-            {item.iconImg ? (
-              <Image
-                src={item.iconImg}
-                width={24}
-                height={24}
-                alt={item.label}
-                className="w-6 h-6 mb-0.5 object-contain"
-              />
-            ) : (
-              <span className="text-xl mb-0.5">{item.icon}</span>
-            )}
-            {item.label}
+            <Icon size={28} className="mb-0.5" />
           </Link>
         ))}
       </nav>
