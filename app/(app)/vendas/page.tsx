@@ -87,6 +87,7 @@ export default function VendasPage() {
           productName: selectedProduct.name,
           quantity: qty,
           unitPrice: selectedProduct.price,
+          unitCost: selectedProduct.cost ?? 0,
           total: qty * selectedProduct.price,
         },
       ]);

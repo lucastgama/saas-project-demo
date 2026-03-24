@@ -30,8 +30,9 @@ const empty: FormData = {
   name: "",
   category: "",
   price: 0,
+  cost: 0,
   stock: 0,
-  minStock: 5,
+  minStock: 3,
   unit: "un",
 };
 
@@ -192,9 +193,17 @@ export default function ProdutosPage() {
                       {p.category}
                     </span>
                   </div>
-                  <span className="text-lg font-bold text-blue-600 whitespace-nowrap">
-                    {fmt(p.price)}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-blue-600 whitespace-nowrap block">
+                      {fmt(p.price)}
+                    </span>
+                    {p.cost > 0 && (
+                      <span className="text-xs text-slate-400">
+                        margem:{" "}
+                        {Math.round(((p.price - p.cost) / p.price) * 100)}%
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
@@ -274,12 +283,21 @@ export default function ProdutosPage() {
               </div>
               <Input
                 id="price"
-                label="Preco (R$) *"
+                label="Preco de Venda (R$) *"
                 type="number"
                 min="0"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => set("price", parseFloat(e.target.value) || 0)}
+              />
+              <Input
+                id="cost"
+                label="Custo (R$)"
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.cost}
+                onChange={(e) => set("cost", parseFloat(e.target.value) || 0)}
               />
               <div className="grid grid-cols-2 gap-3">
                 <Input

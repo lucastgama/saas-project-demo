@@ -3,6 +3,7 @@ export type Product = {
   name: string;
   category: string;
   price: number;
+  cost: number;
   stock: number;
   minStock: number;
   unit: string;
@@ -13,6 +14,7 @@ export type SaleItem = {
   productName: string;
   quantity: number;
   unitPrice: number;
+  unitCost: number;
   total: number;
 };
 
@@ -23,6 +25,13 @@ export type Sale = {
   paymentMethod: "cash" | "card" | "pix";
   createdAt: string;
   note?: string;
+};
+
+export type Expense = {
+  id: string;
+  name: string;
+  value: number;
+  date: string;
 };
 
 export type Settings = {
