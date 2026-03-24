@@ -11,6 +11,7 @@ import {
   MdBarChart,
   MdSettings,
   MdLogout,
+  MdAttachMoney,
 } from "react-icons/md";
 import type { IconType } from "react-icons";
 
@@ -21,6 +22,7 @@ const navItems: NavItem[] = [
   { href: "/produtos", label: "Produtos", Icon: MdInventory2 },
   { href: "/vendas", label: "Nova Venda", Icon: MdShoppingCart },
   { href: "/historico", label: "Historico", Icon: MdHistory },
+  { href: "/financeiro", label: "Financeiro", Icon: MdAttachMoney },
   { href: "/relatorios", label: "Relatorios", Icon: MdBarChart },
   { href: "/configuracoes", label: "Configuracoes", Icon: MdSettings },
 ];
